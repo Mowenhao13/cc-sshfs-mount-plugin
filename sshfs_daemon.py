@@ -89,23 +89,26 @@ def build_sshfs_command(remote: dict, local_root: Path) -> tuple:
         user = os.getenv("USER", "root")
         hostname = user_host
 
-    # Build SSH options
-    ssh_opts = [
-        f"-i {ssh_key_expanded}",
-        f"-p {port}",
-        "-o ServerAliveInterval=30",
-        "-o ServerAliveCountMax=3",
+    # Build SSH options for sshfs
+    # Note: sshfs uses -o IdentityFile=xxx, not -i xxx
+    ssh_identity = f"-o IdentityFile={ssh_key_expanded}"
+    ssh_port_opt = f"-p {port}"
+
+    # Build sshfs -o options
+    sshfs_opts = [
+        "ServerAliveInterval=30",
+        "ServerAliveCountMax=3",
     ]
 
     if options.get("reconnect", False):
-        ssh_opts.append("-o reconnect")
+        sshfs_opts.append("reconnect")
 
     # Build remote path
     remote_full = f"{user}@{hostname}:{remote_path}"
 
-    # Build command
-    ssh_opts_str = " ".join(ssh_opts)
-    cmd = f"sshfs {remote_full} {mount_point} -o {ssh_opts_str}"
+    # Build command: sshfs user@host:path mount_point -o IdentityFile=xxx -p port -o opts
+    sshfs_opts_str = " -o ".join(sshfs_opts)
+    cmd = f"sshfs {remote_full} {mount_point} {ssh_identity} {ssh_port_opt} -o {sshfs_opts_str}"
 
     return cmd, mount_point
 

@@ -6,6 +6,8 @@
 ## 项目创作动机
 作者在服务器上装了cc 但由于cc连接不上我的coding plan 于是只能通过告知本地的cc通过ssh来连接服务器才可运行 但在同时连接两台远端linux设备时 总是会出现需要反复声明ssh服务器来执行命令的操作 每次都要告知cc仓库所在的文件路径 而且本地由于没有挂载远端仓库 导致每次查看文件 都需要ssh 增加麻烦 当仓库一多时 如果仓库不写CLAUDE.md 就会经常出错 于是这款插件便诞生了 
 
+## 支持系统（macos, linux）
+
 ## 功能特性
 
 - 🔧 **通用配置** - 支持任意数量的远程主机，每个主机独立配置
@@ -35,7 +37,7 @@ sshfs-mount/
 
 ```bash
 # 克隆或下载项目
-cd sshfs-mount
+cd cc-sshfs-mount-skills
 
 # 运行安装脚本
 ./install.sh
@@ -207,3 +209,4 @@ ssh user@host  # 测试 SSH 连接
 tail -f ~/.config/sshfs-mounts/daemon.log
 ```
 
+## 目前win版本尚未开发 欢迎大家contribute！
