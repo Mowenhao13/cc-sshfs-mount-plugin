@@ -1,7 +1,12 @@
 {
   "name": "sshfs-mount-plugins",
+  "version": "1.0.0",
+  "description": "SSHFS 挂载管理工具市场",
   "owner": {
     "name": "Mowenhao13"
+  },
+  "metadata": {
+    "pluginRoot": "."
   },
   "plugins": [
     {
