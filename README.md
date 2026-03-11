@@ -219,11 +219,6 @@ ssh user@host  # 测试 SSH 连接
 tail -f ~/.config/sshfs-mounts/daemon.log
 ```
 
-## 版本历史
-
-- **v2.0** - 重构为 Claude Code Plugin 架构，新增 commands/ 和 skills/ 目录
-- **v1.0** - 初始版本，基础 SSHFS 挂载管理功能
-
 ## 支持系统
 
 - macOS
