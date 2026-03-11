@@ -144,7 +144,7 @@ remotes:
     host: halllo-max@172.18.198.243
     remote_path: /home/halllo-max/projects
     local_path: remote-machine1
-    ssh_key: ~/.ssh/id_rsa_mac
+    ssh_key: ~/.ssh/id_rsa
     ssh_port: 22
     options:
       reconnect: true
@@ -154,7 +154,7 @@ remotes:
     host: ubuntu@172.18.166.57:55900
     remote_path: /home/ubuntu/projects
     local_path: remote-machine2
-    ssh_key: ~/.ssh/id_rsa_mac
+    ssh_key: ~/.ssh/id_rsa
     ssh_port: 55900
 ```
 
@@ -253,7 +253,3 @@ tail -f ~/.config/sshfs-mount-plugin/daemon.log
 - Linux
 
 > **Note**: Windows version is not yet available. Contributions welcome!
-
-## License
-
-MIT
