@@ -5,9 +5,6 @@
   "owner": {
     "name": "Mowenhao13"
   },
-  "metadata": {
-    "pluginRoot": "."
-  },
   "plugins": [
     {
       "name": "sshfs-mount",
