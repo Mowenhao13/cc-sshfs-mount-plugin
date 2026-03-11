@@ -1,7 +1,7 @@
 #!/bin/bash
 # 注册本地插件到 Claude Code - 无需官方市场资格
 
-PLUGIN_SOURCE_DIR="$HOME/projects/sshfs-mount"
+PLUGIN_SOURCE_DIR="$HOME/projects/sshfs-mount/plugins/sshfs-mount"
 PLUGIN_CACHE_DIR="$HOME/.claude/plugins/cache/local-plugins/sshfs-mount"
 
 echo "=============================================="
