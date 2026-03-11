@@ -1,0 +1,17 @@
+{
+  "name": "sshfs-mount-plugins",
+  "owner": {
+    "name": "Mowenhao13"
+  },
+  "plugins": [
+    {
+      "name": "sshfs-mount",
+      "description": "SSHFS 远程挂载管理工具 - 挂载/卸载远程目录、守护进程自动重连、生成 CLAUDE.md",
+      "version": "2.0.0",
+      "author": {
+        "name": "Mowenhao13"
+      },
+      "source": "./plugins/sshfs-mount"
+    }
+  ]
+}
