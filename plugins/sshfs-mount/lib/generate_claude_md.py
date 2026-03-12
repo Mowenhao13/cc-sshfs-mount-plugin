@@ -14,13 +14,14 @@ sys.path.insert(0, str(Path(__file__).parent))
 from sshfs_mount import load_config, expand_path, check_mount_status
 
 
-def generate_claude_md(mount_point: Path, ssh_host: str, remote_name: str, force: bool = False) -> bool:
+def generate_claude_md(mount_point: Path, ssh_host: str, remote_name: str, ssh_key: str = "~/.ssh/id_rsa", force: bool = False) -> bool:
     """Generate CLAUDE.md file for a remote mount.
 
     Args:
         mount_point: The mount point directory
         ssh_host: SSH host string
         remote_name: Remote name
+        ssh_key: SSH key path
         force: If True, overwrite existing file. If False, skip if exists.
 
     Returns:
@@ -33,6 +34,9 @@ def generate_claude_md(mount_point: Path, ssh_host: str, remote_name: str, force
         print(f"  ⚠ Skipping {remote_name}: CLAUDE.md already exists (use --force to overwrite)")
         return False
 
+    # Expand SSH key path for display
+    ssh_key_expanded = os.path.expanduser(ssh_key)
+
     content = f'''# CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -44,13 +48,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 当 Claude Code 需要运行命令时：
 1. **不要直接在本地终端运行命令**
 2. **必须先 SSH 登录到远程主机**，然后在远程主机上执行
-3. 或者使用 `ssh user@host "command"` 的方式远程执行
+3. 或者使用 `ssh -i {ssh_key_expanded} user@host "command"` 的方式远程执行
 
 ### 远程主机连接信息
 
 | 挂载点 | SSH 主机 | 说明 |
 |--------|----------|------|
-| `{mount_point}` | `ssh {ssh_host}` | {remote_name} |
+| `{mount_point}` | `ssh -i {ssh_key_expanded} {ssh_host}` | {remote_name} |
 
 ### 命令执行示例
 
@@ -62,12 +66,12 @@ python train.py  # 会在本地 macOS 运行，错误！
 **正确做法**（SSH 到远程后运行）：
 ```bash
 # 方式 1：先登录远程主机
-ssh {ssh_host}
+ssh -i {ssh_key_expanded} {ssh_host}
 cd ~/projects/my-repo
 python train.py
 
 # 方式 2：直接远程执行
-ssh {ssh_host} "cd ~/projects/my-repo && python train.py"
+ssh -i {ssh_key_expanded} {ssh_host} "cd ~/projects/my-repo && python train.py"
 ```
 
 ---
@@ -108,6 +112,7 @@ def generate_all(force: bool = False) -> None:
         local_path = remote.get("local_path", name)
         mount_point = local_root / local_path
         host = remote.get("host", "")
+        ssh_key = remote.get("ssh_key", "~/.ssh/id_rsa")
 
         # Check if mounted
         if not check_mount_status(mount_point):
@@ -115,7 +120,7 @@ def generate_all(force: bool = False) -> None:
             continue
 
         # Generate CLAUDE.md
-        generate_claude_md(mount_point, host, name, force)
+        generate_claude_md(mount_point, host, name, ssh_key, force)
 
 
 def check_current_directory() -> None:
@@ -179,8 +184,9 @@ def main():
         mount_point = expand_path(sys.argv[2])
         ssh_host = sys.argv[3]
         remote_name = sys.argv[4]
+        ssh_key = sys.argv[5] if len(sys.argv) > 5 else "~/.ssh/id_rsa"
 
-        generate_claude_md(mount_point, ssh_host, remote_name, force)
+        generate_claude_md(mount_point, ssh_host, remote_name, ssh_key, force)
 
     elif command == "generate-all":
         generate_all(force)
