@@ -149,29 +149,118 @@ remotes:
     options:
       reconnect: true
       server_alive_interval: 30
-
-  - name: remote-machine2
-    host: ubuntu@172.18.166.57:55900
-    remote_path: /home/ubuntu/projects
-    local_path: remote-machine2
-    ssh_key: ~/.ssh/id_rsa
-    ssh_port: 55900
 ```
 
-### Profile Example
+### Complete Configuration Parameters
+
+#### Top-Level Fields
+
+| Field | Required | Type | Description | Example |
+|-------|----------|------|-------------|---------|
+| `local_root` | Yes | string | Local base directory for mounting mounts | `~/projects` |
+| `remotes` | Yes | array | List of remote host configurations | See below |
+
+#### Remote Host Fields
+
+| Field | Required | Type | Description | Example |
+|-------|----------|------|-------------|---------|
+| `name` | Yes | string | Unique identifier for this remote | `remote-matrix` |
+| `host` | Yes | string | SSH host in format `user@hostname` or `user@ip` | `halllo-max@172.18.198.243` |
+| `remote_path` | Yes | string | Absolute path on remote server | `/home/halllo-max/projects` |
+| `local_path` | Yes | string | Relative path under `local_root` for mount point | `remote-matrix` |
+| `ssh_key` | No | string | Path to SSH private key (default: `~/.ssh/id_rsa`) | `~/.ssh/id_rsa_mac` |
+| `ssh_port` | No | integer | SSH port (default: 22) | `55900` |
+| `options` | No | object | SSHFS mount options | See below |
+
+#### SSHFS Options Fields
+
+| Option | Type | Default | Description | Recommended Value |
+|--------|------|---------|-------------|-------------------|
+| `reconnect` | boolean | `false` | Auto-reconnect on connection drop | `true` |
+| `server_alive_interval` | integer | `0` | Seconds between keepalive packets. Set to 15-30 for unstable connections | `15` |
+| `server_alive_count_max` | integer | `3` | Max missed keepalives before disconnect | `3` |
+| `connect_timeout` | integer | `15` | Connection timeout in seconds | `10` |
+| `ssh_command` | string | `ssh` | Custom SSH command with options | `ssh -o TCPKeepAlive=yes -o ServerAliveInterval=15` |
+| `fsname` | string | - | Filesystem name shown in mount output | |
+| `follow_symlinks` | boolean | `false` | Follow symlinks on remote server | `true` |
+| `nonempty` | boolean | `false` | Allow mounting over non-empty directories | `true` |
+| `large_read` | boolean | `false` | Enable large read operations for better throughput | `true` |
+| `max_readahead` | integer | `65536` | Max bytes to read ahead | `65536` |
+| `cache_timeout` | integer | `20` | Attribute cache timeout in seconds | `30` |
+| `sshfs_debug` | boolean | `false` | Enable SSHFS debug output | `false` |
+| `slave` | boolean | `false` | Enable slave mode for SSH communication | `false` |
+| `disable_hardlink` | boolean | `false` | Disable hardlink creation | `false` |
+| `umask` | string | - | File permission mask | `0022` |
+| `uid` | integer | - | Force UID for all files | - |
+| `gid` | integer | - | Force GID for all files | - |
+| `entry_timeout` | integer | `20` | Timeout for cached directory entries | `30` |
+| `attr_timeout` | integer | `20` | Timeout for cached file attributes | `30` |
+
+#### Performance Tuning Recommendations
+
+For **slow/unstable connections**:
+```yaml
+options:
+  reconnect: true
+  server_alive_interval: 15
+  server_alive_count_max: 3
+  connect_timeout: 10
+  cache_timeout: 60
+  entry_timeout: 60
+  attr_timeout: 60
+```
+
+For **high-throughput needs**:
+```yaml
+options:
+  large_read: true
+  max_readahead: 131072
+  ssh_command: ssh -c arcfour -o Compression=no
+```
+
+For **frequently changing files**:
+```yaml
+options:
+  cache_timeout: 5
+  entry_timeout: 5
+  attr_timeout: 5
+```
+
+#### Complete Example Configuration
 
 ```yaml
-# ~/.config/sshfs-mount-plugin/profiles/work.yaml
-name: work
-description: Work development environment
-
-local_root: ~/work-projects
+local_root: ~/projects
 
 remotes:
-  - name: remote-prod
-    host: user@prod-server.example.com
-    remote_path: ~/projects
-    local_path: remote-prod
+  - name: remote-matrix
+    host: halllo-max@172.18.198.243
+    remote_path: /home/halllo-max/projects
+    local_path: remote-matrix
+    ssh_key: ~/.ssh/id_rsa
+    ssh_port: 22
+    options:
+      reconnect: true
+      server_alive_interval: 15
+      server_alive_count_max: 3
+      connect_timeout: 10
+      ssh_command: ssh -o TCPKeepAlive=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=3
+      fsname: remote-matrix
+      follow_symlinks: true
+      nonempty: true
+      large_read: true
+      max_readahead: 65536
+      cache_timeout: 30
+
+  # With custom SSH port
+  - name: remote-lab
+    host: ubuntu@172.18.166.57
+    remote_path: /home/ubuntu/projects
+    local_path: remote-lab
+    ssh_key: ~/.ssh/id_rsa
+    ssh_port: 55900
+    options:
+      reconnect: true
+      server_alive_interval: 30
 ```
 
 ## Profile Management

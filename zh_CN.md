@@ -149,29 +149,118 @@ remotes:
     options:
       reconnect: true
       server_alive_interval: 30
-
-  - name: remote-machine2
-    host: ubuntu@172.18.166.57:55900
-    remote_path: /home/ubuntu/projects
-    local_path: remote-machine2
-    ssh_key: ~/.ssh/id_rsa
-    ssh_port: 55900
 ```
 
-### Profile 配置示例
+### 完整配置参数说明
+
+#### 顶层字段
+
+| 字段 | 必需 | 类型 | 说明 | 示例 |
+|------|------|------|------|------|
+| `local_root` | 是 | string | 本地挂载基础目录 | `~/projects` |
+| `remotes` | 是 | array | 远程主机配置列表 | 见下表 |
+
+#### 远程主机字段
+
+| 字段 | 必需 | 类型 | 说明 | 示例 |
+|------|------|------|------|------|
+| `name` | 是 | string | 远程主机的唯一标识符 | `remote-matrix` |
+| `host` | 是 | string | SSH 主机，格式为 `user@hostname` 或 `user@ip` | `halllo-max@172.18.198.243` |
+| `remote_path` | 是 | string | 远程服务器上的绝对路径 | `/home/halllo-max/projects` |
+| `local_path` | 是 | string | `local_root` 下的相对路径作为挂载点 | `remote-matrix` |
+| `ssh_key` | 否 | string | SSH 私钥路径（默认：`~/.ssh/id_rsa`） | `~/.ssh/id_rsa_mac` |
+| `ssh_port` | 否 | integer | SSH 端口（默认：22） | `55900` |
+| `options` | 否 | object | SSHFS 挂载选项 | 见下表 |
+
+#### SSHFS 选项字段
+
+| 选项 | 类型 | 默认值 | 说明 | 推荐值 |
+|------|------|--------|------|--------|
+| `reconnect` | boolean | `false` | 连接断开时自动重连 | `true` |
+| `server_alive_interval` | integer | `0` | 保活包发送间隔（秒）。不稳定连接建议设置为 15-30 | `15` |
+| `server_alive_count_max` | integer | `3` | 允许丢失的保活包数量上限 | `3` |
+| `connect_timeout` | integer | `15` | 连接超时时间（秒） | `10` |
+| `ssh_command` | string | `ssh` | 自定义 SSH 命令及选项 | `ssh -o TCPKeepAlive=yes -o ServerAliveInterval=15` |
+| `fsname` | string | - | 在 mount 输出中显示的文件系统名称 | |
+| `follow_symlinks` | boolean | `false` | 跟随远程服务器上的符号链接 | `true` |
+| `nonempty` | boolean | `false` | 允许挂载到非空目录 | `true` |
+| `large_read` | boolean | `false` | 启用大块读取操作以提高吞吐量 | `true` |
+| `max_readahead` | integer | `65536` | 最大预读字节数 | `65536` |
+| `cache_timeout` | integer | `20` | 属性缓存超时时间（秒） | `30` |
+| `sshfs_debug` | boolean | `false` | 启用 SSHFS 调试输出 | `false` |
+| `slave` | boolean | `false` | 启用 SSH 通信的 slave 模式 | `false` |
+| `disable_hardlink` | boolean | `false` | 禁用硬链接创建 | `false` |
+| `umask` | string | - | 文件权限掩码 | `0022` |
+| `uid` | integer | - | 强制设置所有文件的 UID | - |
+| `gid` | integer | - | 强制设置所有文件的 GID | - |
+| `entry_timeout` | integer | `20` | 缓存目录条目的超时时间 | `30` |
+| `attr_timeout` | integer | `20` | 缓存文件属性的超时时间 | `30` |
+
+#### 性能调优建议
+
+**慢速/不稳定连接**：
+```yaml
+options:
+  reconnect: true
+  server_alive_interval: 15
+  server_alive_count_max: 3
+  connect_timeout: 10
+  cache_timeout: 60
+  entry_timeout: 60
+  attr_timeout: 60
+```
+
+**高吞吐量需求**：
+```yaml
+options:
+  large_read: true
+  max_readahead: 131072
+  ssh_command: ssh -c arcfour -o Compression=no
+```
+
+**频繁变更的文件**：
+```yaml
+options:
+  cache_timeout: 5
+  entry_timeout: 5
+  attr_timeout: 5
+```
+
+#### 完整配置示例
 
 ```yaml
-# ~/.config/sshfs-mount-plugin/profiles/work.yaml
-name: work
-description: 工作开发环境
-
-local_root: ~/work-projects
+local_root: ~/projects
 
 remotes:
-  - name: remote-prod
-    host: user@prod-server.example.com
-    remote_path: ~/projects
-    local_path: remote-prod
+  - name: remote-matrix
+    host: halllo-max@172.18.198.243
+    remote_path: /home/halllo-max/projects
+    local_path: remote-matrix
+    ssh_key: ~/.ssh/id_rsa
+    ssh_port: 22
+    options:
+      reconnect: true
+      server_alive_interval: 15
+      server_alive_count_max: 3
+      connect_timeout: 10
+      ssh_command: ssh -o TCPKeepAlive=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=3
+      fsname: remote-matrix
+      follow_symlinks: true
+      nonempty: true
+      large_read: true
+      max_readahead: 65536
+      cache_timeout: 30
+
+  # 自定义 SSH 端口
+  - name: remote-lab
+    host: ubuntu@172.18.166.57
+    remote_path: /home/ubuntu/projects
+    local_path: remote-lab
+    ssh_key: ~/.ssh/id_rsa
+    ssh_port: 55900
+    options:
+      reconnect: true
+      server_alive_interval: 30
 ```
 
 ## Profile 管理
