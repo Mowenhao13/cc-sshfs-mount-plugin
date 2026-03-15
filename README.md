@@ -165,11 +165,11 @@ remotes:
 
 | Field | Required | Type | Description | Example |
 |-------|----------|------|-------------|---------|
-| `name` | Yes | string | Unique identifier for this remote | `remote-matrix` |
+| `name` | Yes | string | Unique identifier for this remote |  |
 | `host` | Yes | string | SSH host in format `user@hostname` or `user@ip` | `halllo-max@172.18.198.243` |
 | `remote_path` | Yes | string | Absolute path on remote server | `/home/halllo-max/projects` |
-| `local_path` | Yes | string | Relative path under `local_root` for mount point | `remote-matrix` |
-| `ssh_key` | No | string | Path to SSH private key (default: `~/.ssh/id_rsa`) | `~/.ssh/id_rsa_mac` |
+| `local_path` | Yes | string | Relative path under `local_root` for mount point | |
+| `ssh_key` | No | string | Path to SSH private key (default: `~/.ssh/id_rsa`) | `~/.ssh/id_rsa` |
 | `ssh_port` | No | integer | SSH port (default: 22) | `55900` |
 | `options` | No | object | SSHFS mount options | See below |
 

@@ -165,11 +165,11 @@ remotes:
 
 | 字段 | 必需 | 类型 | 说明 | 示例 |
 |------|------|------|------|------|
-| `name` | 是 | string | 远程主机的唯一标识符 | `remote-matrix` |
+| `name` | 是 | string | 远程主机的唯一标识符 |  |
 | `host` | 是 | string | SSH 主机，格式为 `user@hostname` 或 `user@ip` | `halllo-max@172.18.198.243` |
 | `remote_path` | 是 | string | 远程服务器上的绝对路径 | `/home/halllo-max/projects` |
 | `local_path` | 是 | string | `local_root` 下的相对路径作为挂载点 | `remote-matrix` |
-| `ssh_key` | 否 | string | SSH 私钥路径（默认：`~/.ssh/id_rsa`） | `~/.ssh/id_rsa_mac` |
+| `ssh_key` | 否 | string | SSH 私钥路径（默认：`~/.ssh/id_rsa`） | `~/.ssh/id_rsa` |
 | `ssh_port` | 否 | integer | SSH 端口（默认：22） | `55900` |
 | `options` | 否 | object | SSHFS 挂载选项 | 见下表 |
 
