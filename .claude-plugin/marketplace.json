@@ -1,5 +1,5 @@
 {
-  "name": "sshfs-mount-plugins",
+  "name": "sshfs-mount-plugin",
   "version": "1.0.0",
   "description": "SSHFS 挂载管理工具市场",
   "owner": {

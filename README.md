@@ -54,7 +54,8 @@ sshfs-mount/
 
 ```bash
 # Run in Claude Code
-/plugins install /Users/halllo/.claude/plugins/cache/local-plugins/sshfs-mount
+/plugin marketplace add Mowenhao13/sshfs-mount-plugin
+/plugin install sshfs-mount@sshfs-mount-plugin
 ```
 
 #### Option 2: Run Installation Script (Standalone CLI)

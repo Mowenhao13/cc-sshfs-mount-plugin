@@ -54,14 +54,15 @@ sshfs-mount/
 
 ```bash
 # 在 Claude Code 中执行
-/plugins install /Users/halllo/.claude/plugins/cache/local-plugins/sshfs-mount
+/plugin marketplace add Mowenhao13/sshfs-mount-plugin
+/plugin install sshfs-mount@sshfs-mount-plugin
 ```
 
 #### 方式 2：运行安装脚本（独立 CLI 安装）
 
 ```bash
 # 克隆或下载项目
-cd sshfs-mount/plugins/sshfs-mount
+cd sshfs-mount-plugin/plugins/sshfs-mount
 
 # 运行安装脚本
 ./scripts/install.sh
